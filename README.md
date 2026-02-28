@@ -1,6 +1,6 @@
 # Academic Practice Agents
 
-A collection of agent instructions based on the various roles that tenure-track faculty play in their professional lives. Each agent is tailored to a specific role:
+A growing collection of agent instructions based on the various roles that tenure-track faculty play in their professional lives. Each agent is tailored to a specific role:
 
 - 🔬 **Scientist** — designing experiments, analyzing results, and advancing research
 - 📋 **Project manager** — planning, tracking, and delivering research projects on time
