@@ -81,23 +81,59 @@ cp ../apps/template-grader.jsx src/App.jsx
 npm run dev
 ```
 
-Open `http://localhost:5173` in your browser. The app is ready.
+Open `http://localhost:5173` in your browser or whatever default localhost it asked for. The default app has to be App.jsx, so overwrite the file with your current homework. 
 
-**API key:** The `fetch` call in `callClaude` sends requests to `https://api.anthropic.com/v1/messages`. If running locally you must provide your API key. The simplest approach is to add an `x-api-key` header directly in `callClaude`:
-
-```js
-headers: {
-  "Content-Type": "application/json",
-  "x-api-key": "sk-ant-...",          // add this line
-  "anthropic-version": "2023-06-01",  // add this line
-},
-```
-
-Keep your key out of version control. Use an environment variable or a local proxy.
+**If you see `⚠ Failed to fetch` when grading** — this means no API key is set. Fix it before doing anything else (see [Adding your API key](#adding-your-api-key) below).
 
 ### Option B — Paste into claude.ai as an artifact
 
 Copy the full contents of any JSX file (with your solution key pasted in) and paste it into a claude.ai conversation. Claude will render it as a live React app in the artifact panel. No setup needed.
+
+---
+
+## Adding your API key
+
+> **Skip this section if you are using Option B (claude.ai artifact)** — the platform injects the key automatically.
+
+When running locally with Vite, every grading request goes directly from your browser to the Anthropic API. Without a key the fetch fails immediately with `⚠ Failed to fetch`.
+
+### Step 1 — Get your key
+
+Go to [console.anthropic.com](https://console.anthropic.com) → **API Keys** → **Create Key**. Copy the `sk-ant-...` string.
+
+### Step 2 — Add it to the JSX file
+
+Open `src/App.jsx` and find the `callClaude` function near the top (search for `const callClaude`). Find the `headers` block and add the two lines shown:
+
+```js
+const callClaude = async (system, content) => {
+  const r = await fetch("https://api.anthropic.com/v1/messages", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "x-api-key": "sk-ant-...",          // ← paste your key here
+      "anthropic-version": "2023-06-01",  // ← add this line exactly as shown
+    },
+```
+
+Save the file. Vite hot-reloads automatically — no need to restart `npm run dev`.
+
+### Step 3 — Try grading again
+
+Upload a submission and click **Grade**. The `⚠ Failed to fetch` error should be gone.
+
+### Keeping your key safe
+
+- **Never commit `sk-ant-...` to git.** Add `src/App.jsx` to `.gitignore` if it contains your key, or strip the key before pushing.
+- For a cleaner setup, use a Vite environment variable instead of a hardcoded string:
+  1. Create a file called `.env.local` in the root of your Vite project (next to `package.json`)
+  2. Add one line: `VITE_ANTHROPIC_KEY=sk-ant-...`
+  3. In `App.jsx`, replace the hardcoded key with: `import.meta.env.VITE_ANTHROPIC_KEY`
+  4. Add `.env.local` to `.gitignore`
+
+```js
+"x-api-key": import.meta.env.VITE_ANTHROPIC_KEY,
+```
 
 ---
 
