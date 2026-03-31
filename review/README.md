@@ -1,7 +1,6 @@
 # review/
 
-The review agent helps a faculty member evaluate manuscripts, proposals, and other scholarly work. It is grounded in disciplinary standards, prior reviews, and the author's own research expertise, supporting rigorous and constructive assessment.
-
-## Specs in this folder
-
-*(No specs yet — [propose one](../.github/ISSUE_TEMPLATE/new-role.yml))*
+This folder contains scientific paper reviewing skills with:
+* A AI-generated synthesis of the main geophysical journal's guidelines to reviewers, added with M Denolle's own rubric, a few NASEM report on reproducibility, automous science, and discovery, a few articles the mechanisms and impact of peer reviewing.
+* AI2-asta report on scientific peer review.
+* a pre-paper-submission-review.md skill file generated for a claude agent based on the above documents and knowledge base. The reviewer may ask which journal the paper aims to be published, and should probably be improved based on the journal's scope (not described).
