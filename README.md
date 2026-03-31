@@ -6,11 +6,9 @@ A growing collection of agent specifications for the many roles that tenure-trac
 
 | Role | Folder | Status |
 |---|---|---|
-| 🔬 Scientist | [`research/`](research/) | planned |
+| 🔬 Scientist | [`research/`](research/) | **active** |
 | 📋 Project manager | [`project-management/`](project-management/) | planned |
-| 📊 Data analyst | [`data-analysis/`](data-analysis/) | planned |
-| 🎓 Mentor | [`mentoring/`](mentoring/) | planned |
-| 🔍 Reviewer | [`review/`](review/) | planned |
+| 🔍 Reviewer | [`review/`](review/) | **active** |
 | 📣 Public communicator | [`communication/`](communication/) | planned |
 | 📚 Curriculum builder | [`teaching/`](teaching/) | **active** |
 | 🤝 Collaborator | [`collaboration/`](collaboration/) | planned |
