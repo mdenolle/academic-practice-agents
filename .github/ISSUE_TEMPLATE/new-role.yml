@@ -1,0 +1,32 @@
+name: Propose a new agent role
+description: Suggest a new academic role for the collection
+labels: ["new-role"]
+body:
+  - type: input
+    id: role-name
+    attributes:
+      label: Role name
+      placeholder: e.g., "grant reviewer", "lab manager"
+    validations:
+      required: true
+  - type: textarea
+    id: why-distinct
+    attributes:
+      label: Why is this role distinct?
+      description: Explain why this role needs its own agent specification rather than being covered by an existing one.
+    validations:
+      required: true
+  - type: textarea
+    id: three-layers
+    attributes:
+      label: Three-layer sketch
+      description: Draft the knowledge anchor, standing instructions, and prompt intent for this role.
+    validations:
+      required: true
+  - type: textarea
+    id: failure-modes
+    attributes:
+      label: Anticipated failure modes
+      description: What do you expect could go wrong? Even a guess is useful here.
+    validations:
+      required: false

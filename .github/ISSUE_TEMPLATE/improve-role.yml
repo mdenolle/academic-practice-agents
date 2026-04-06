@@ -1,0 +1,25 @@
+name: Improve an existing agent spec
+description: Suggest changes to an existing specification
+labels: ["improvement"]
+body:
+  - type: input
+    id: spec-file
+    attributes:
+      label: Which spec file?
+      placeholder: e.g., teaching/seismo-course-agent.md
+    validations:
+      required: true
+  - type: textarea
+    id: what-to-change
+    attributes:
+      label: What should change and why?
+      description: Quote the relevant section and explain the improvement.
+    validations:
+      required: true
+  - type: textarea
+    id: observed-failure
+    attributes:
+      label: Did a failure mode motivate this change?
+      description: If so, describe what went wrong and what you tried.
+    validations:
+      required: false
