@@ -1,0 +1,34 @@
+---
+description: Denolle group pre-submission manuscript reviewer. Invoke for "review my paper", "is this ready for GRL", "pre-submission review", "what would reviewers say" on a geoscience manuscript.
+globs:
+alwaysApply: false
+---
+
+# Pre-Submission Reviewer (Cursor adapter)
+
+This rule is a thin pointer. The actual agent is the skill in this repo —
+read it and follow it as the orchestrator:
+
+@skills/pre-submission-reviewer/SKILL.md
+
+The nine subagents (system prompts) and the per-author profiles live in:
+
+- `skills/pre-submission-reviewer/references/` — S-AB, S-IN, S-ME, S-RE, S-DI,
+  S-CO, S-FD, S-RP, S-CD, plus `author_profile.md` and `review_manifest.md`.
+- `skills/pre-submission-reviewer/profiles/` — voice profiles.
+
+How to run it in Cursor (single agent, sequential — Mode B in the SKILL):
+
+1. Load the prior review manifest (`reviews/<id>.review.json`) if it exists
+   → reconciliation mode; otherwise iteration 1, a full review.
+2. Gather inputs (manuscript, target journal, paper type) and calibrate.
+3. On a re-review, run `scripts/detect_changes.py` on the author's latexdiff or
+   before/after pair, then re-review only changed scope.
+4. Process the registry one subagent at a time: read its reference file, apply
+   only that checklist, emit its findings block, move on.
+5. Synthesize into the 8-criterion rubric and write the report, ending with the
+   AI-review disclosure stamp and the Ledger for next iteration.
+
+Ground rules (non-negotiable): our group's own unpublished work only; advisory;
+never write a referee report as if a human wrote it; disclose AI use; flag, don't
+verify; iterations only improve (reconcile, never re-litigate unchanged text).

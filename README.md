@@ -9,6 +9,7 @@ A growing collection of agent specifications for the many roles that tenure-trac
 | 🔬 Scientist | [`research/`](research/) | **active** |
 | 📋 Project manager | [`project-management/`](project-management/) | planned |
 | 🔍 Reviewer | [`review/`](review/) | **active** |
+| 📝 Pre-submission reviewer | [`pre-submission-agent/`](pre-submission-agent/) | **active** |
 | 📣 Public communicator | [`communication/`](communication/) | planned |
 | 📚 Curriculum builder | [`teaching/`](teaching/) | **active** |
 | 🤝 Collaborator | [`collaboration/`](collaboration/) | planned |

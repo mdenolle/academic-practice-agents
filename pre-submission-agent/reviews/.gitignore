@@ -1,0 +1,4 @@
+# Per-manuscript review state is local by default. Delete this file if the group
+# decides to commit the review trajectory to git history (see README.md).
+*.review.json
+*.changes.json

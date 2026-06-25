@@ -1,0 +1,6 @@
+# claude.ai upload bundle, built by scripts/install.sh
+dist/
+
+# python bytecode
+__pycache__/
+*.pyc
