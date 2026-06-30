@@ -1,0 +1,5 @@
+# Olympus — private multi-agent system (Opus-as-Fable), under audit. Keep local for now.
+research/Olympus/
+
+# Gaia — Denolle-group research-agent suite derived from Olympus; private until re-audit + lean-down.
+research/gaia/
