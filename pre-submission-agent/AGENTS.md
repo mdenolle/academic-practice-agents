@@ -26,6 +26,13 @@ Run the pre-submission reviewer when someone asks to review, critique, or
 check a geoscience manuscript before submitting it to a journal — e.g. "review
 my paper," "is this ready for GRL," "what would reviewers say."
 
+There is also an optional **Author Verification** pass (`S-AV`), run when someone
+asks to be quizzed on their own paper — "quiz me on my paper," "verify I
+understand my methods," "check I'm in control of the workflow." It examines the
+authors on the data-processing/signal-processing and interpretation choices they
+must own, records their answers, and certifies process, not competence. It is a
+separate axis from the review — accountability, not quality — and gates nothing.
+
 ## How to run it
 
 1. Open `skills/pre-submission-reviewer/SKILL.md` and follow it as the
@@ -46,6 +53,12 @@ my paper," "is this ready for GRL," "what would reviewers say."
    the orchestrator alone writes the report.
 4. Synthesize into the eight-criterion rubric and produce the report described
    in the SKILL.
+5. **(Optional) Author Verification (Step 6).** If asked to quiz/verify the
+   authors, follow `references/section_author_verification.md`: examine one topic
+   at a time (workflow first), record verbatim answers, classify only whether each
+   was answered, and write the transcript to
+   `reviews/<manuscript-id>.verification.json` plus a process-only in-paper
+   statement. The agent never grades understanding; a named human adjudicates.
 
 ## Scope and ground rules (non-negotiable)
 
@@ -62,6 +75,10 @@ my paper," "is this ready for GRL," "what would reviewers say."
   changed text, never re-litigate unchanged sections. State lives in the review
   manifest. This is a filesystem/CLI tool — not for stateless browser sessions
   past iteration 1.
+- Author Verification certifies process, not competence. The quiz and its in-paper
+  statement record that an examination happened and what was answered — never that
+  an author understands the work. The agent asks and records; a named human judges.
+  It gates nothing and never overrides a soundness/reproducibility/evidence finding.
 
 ## Repo conventions
 

@@ -25,6 +25,11 @@ Then:
 5. Produce the report: strengths first, submission-readiness, section + criterion
    views, then the **AI-review disclosure stamp** and the **Ledger for next
    iteration**.
+6. (Optional) If I ask to be quizzed/verified, run the **Author Verification**
+   pass (`references/section_author_verification.md`): examine one topic at a time
+   (data/signal-processing choices first), record my verbatim answers, and emit a
+   transcript plus a process-only in-paper statement. Do not grade whether I
+   understand — that's a human's call; it gates nothing.
 
 Non-negotiable: our group's own unpublished work only; advisory; never a
 journal-facing referee report; disclose AI use; flag don't verify; every

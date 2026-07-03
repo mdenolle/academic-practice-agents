@@ -14,7 +14,8 @@ read it and follow it as the orchestrator:
 The nine subagents (system prompts) and the per-author profiles live in:
 
 - `skills/pre-submission-reviewer/references/` — S-AB, S-IN, S-ME, S-RE, S-DI,
-  S-CO, S-FD, S-RP, S-CD, plus `author_profile.md` and `review_manifest.md`.
+  S-CO, S-FD, S-RP, S-CD, the optional interactive `S-AV` (author verification
+  quiz), plus `author_profile.md` and `review_manifest.md`.
 - `skills/pre-submission-reviewer/profiles/` — voice profiles.
 
 How to run it in Cursor (single agent, sequential — Mode B in the SKILL):
@@ -28,6 +29,11 @@ How to run it in Cursor (single agent, sequential — Mode B in the SKILL):
    only that checklist, emit its findings block, move on.
 5. Synthesize into the 8-criterion rubric and write the report, ending with the
    AI-review disclosure stamp and the Ledger for next iteration.
+6. (Optional) If asked to quiz/verify the authors, run the `S-AV` Author
+   Verification pass (`references/section_author_verification.md`): examine one
+   topic at a time (data/signal-processing first), record verbatim answers, and
+   write the transcript + process-only in-paper statement. Never grade
+   understanding — a named human adjudicates; it gates nothing.
 
 Ground rules (non-negotiable): our group's own unpublished work only; advisory;
 never write a referee report as if a human wrote it; disclose AI use; flag, don't

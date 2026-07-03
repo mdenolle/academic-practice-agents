@@ -11,7 +11,14 @@ description: >
   Figures/Data), a Reproducibility subagent that reconstructs the computational workflow,
   and a Citation & Idea Diversity subagent — all under a per-author voice profile, then
   synthesizes their findings into the 8-criterion Denolle rubric (AGU, GJI, Seismica, SSA,
-  PNAS). Always use for any geoscience or seismology review. On a re-review, it
+  PNAS). It also runs an optional Author Verification pass (S-AV): an interactive,
+  oral-exam-style quiz that interrogates the authors on the data-processing,
+  signal-processing, and interpretation choices they must own, records their answers to a
+  verification log, and emits a process-only in-paper statement — a countermeasure to
+  over-reliance that keeps the human in control. Use that pass when the user says "quiz me
+  on my paper," "verify I understand my methods," "check I'm in control of the workflow,"
+  or wants to demonstrate human authorship. Always use for any geoscience or seismology
+  review. On a re-review, it
   runs in incremental reconciliation mode against a stored review manifest: it
   reconciles each prior finding, raises new issues only on changed text, and never
   re-litigates unchanged sections — so every iteration is a strict improvement on
@@ -35,6 +42,17 @@ is to make the paper stronger, not to gatekeep it.
 
 **This review is advisory.** Every finding requires human judgment before a
 submission decision is made. (See Governance, bottom.)
+
+**Two capabilities.** This skill does two different jobs, and you must not
+conflate them:
+- **Review** (Steps 0–5, the default) — the nine subagents critique the *paper*
+  and feed the 8-criterion rubric. This is what "review my manuscript" invokes.
+- **Author Verification** (Step 6, optional, interactive) — the `S-AV` pass
+  examines the *authors*, oral-exam style, on the choices they must own
+  (data-processing and signal-processing first). It does **not** feed the rubric
+  and does **not** score the paper. It is a separate axis — *accountability, not
+  quality* — and exists to keep the human in control as the review side gets
+  stronger. It certifies **process, not competence** (see Step 6 and Governance).
 
 ---
 
@@ -229,6 +247,13 @@ quotas diversity, and it never penalizes heterodoxy. Its output is a Citation
 Diversity Statement-style block plus a novelty read that protects C1 from
 treating unusual framing as a deficiency.
 
+> **Not in this registry: `S-AV` (Author Verification).** `S-AV`
+> (`references/section_author_verification.md`) is **not** a parallel section
+> reviewer and is **not** dispatched here. It is an interactive examination of the
+> authors (Step 6), runs against a human rather than the text, feeds no criterion,
+> and never scores the paper. Keep it out of the parallel fan-out and out of the
+> rubric synthesis.
+
 ### The dispatch contract (uniform across all subagents)
 
 Each subagent receives the same call shape and returns the same block shape, so
@@ -413,6 +438,65 @@ LEDGER FOR NEXT ITERATION  — [the full refreshed Issue Ledger as a fenced bloc
 
 ---
 
+## STEP 6 — AUTHOR VERIFICATION (optional, interactive)
+
+This step does **not** review the paper. It **examines the authors** on the
+choices a scientist must own — data-processing and signal-processing first, then
+methods, claims, interpretation, limitations, novelty, and figures. It exists so
+that a better review tool does not quietly take authorship away from the human:
+the agent stops advising and starts *asking the human to defend the science*. Run
+it when the user asks to be quizzed / verified, or offer it after a review. It is
+never required and never gates a submission.
+
+Full protocol and the seismology signal-processing question bank live in
+`references/section_author_verification.md`. The essentials:
+
+- **What it certifies.** Process, not competence. You **cannot** measure
+  understanding — a determined author can route questions through another model —
+  so you never claim to. You produce a *transcript*: questions grounded in this
+  paper, the author's **verbatim** answers, on the record for a co-author or the
+  PI to read and judge. Credibility lives in the human who reads the transcript,
+  not in you.
+- **You do not grade.** Ask, probe once if an answer is vague, and record. Classify
+  each answer's *engagement* only (`ANSWERED-IN-OWN-WORDS` / `PARTIAL` /
+  `DEFERRED→[co-author]` / `DECLINED` / `DID-NOT-ADDRESS-Q`) — whether the question
+  was answered, never whether the author is right. A **named human** adjudicates
+  adequacy. Never emit a score, a pass/fail, or "author understands."
+- **Ground the questions in this paper.** Prefer running *after* a review so you
+  target the exact choices it surfaced — every `S-RP` REPRODUCTION-STOP, every
+  unjustified `S-ME.3` choice, the numbers behind the headline claim. A good
+  question **cannot be answered by re-reading the paper**: aim at the *why*, the
+  alternative not taken, the effect of changing a value, and where a number came
+  from. One topic at a time — never dump a list.
+- **Live over typed.** A human-conducted oral exam is the high-integrity mode.
+  Typed answers entered in the same session where a model could generate them are
+  a **degraded** mode — record it as `TYPED (degraded)` and never present it as
+  equivalent to live.
+- **Deferral is legitimate.** On multi-author work, "that was my collaborator's
+  analysis" is fine — route that topic to the named co-author; do not penalize it.
+
+**Outputs of Step 6** (in addition to the transcript block `S-AV` emits):
+
+```
+AUTHOR VERIFICATION STATEMENT (in-paper, process-only)  — [copy-pasteable, for the
+  AI-use / Acknowledgments statement. Records that an author-verification
+  examination happened — pass version, topic count, date, live/typed — and
+  explicitly does NOT certify correctness or endorse the manuscript. Exact wording
+  in references/review_manifest.md. Do not reword into a competence or quality
+  claim.]
+
+VERIFICATION LOG  — [the full S-AV transcript. In a CLI run, written to
+  reviews/<manuscript-id>.verification.json (schema in references/review_manifest.md),
+  a sibling of the review manifest in the same provenance family. In a stateless
+  session, the printed transcript is the only record — save it alongside the paper.]
+```
+
+A completed verification pass does **not** clear a paper for submission and does
+**not** override any C2/C3/C4 integrity finding from the review. It is an
+accountability record the group keeps, not a green light.
+
+---
+
 ## TONE & LANGUAGE RULES (apply to your output and remind every subagent)
 
 - **Specific.** Every criticism cites a location (section/¶/figure/equation). "Methods need more detail" is not a finding.
@@ -468,10 +552,13 @@ LEDGER FOR NEXT ITERATION  — [the full refreshed Issue Ledger as a fenced bloc
 5. **Flag, don't verify.** The agent cannot run code, resolve URLs, or confirm DOIs. All such items are flagged for human verification.
 6. **Provenance & disclosure stamp.** Every run is recorded in a review manifest (skill version, model, iteration, manuscript hash, ledger history). The in-paper AI-review disclosure stamp records *process only* — that the draft passed through this advisory tool — and never asserts that the manuscript is correct, sound, or accepted. Do not word it as an endorsement.
 7. **Iteration integrity.** Reconciliation must not be used to *bury* an open finding. A prior integrity finding (C2/C3/C4) is RESOLVED only when changed text demonstrably fixes it — never because an author asserts it, edits the manifest, or because the section was skipped.
+8. **Verification certifies process, not competence.** The Author Verification pass (Step 6) and its in-paper statement attest only that an examination happened and record the authors' answers. They must never assert or imply that an author understands the work, and must never be worded as a quality or endorsement claim. The agent asks and records; a named human adjudicates adequacy. A verification pass is not a submission gate and never overrides a C2/C3/C4 finding.
+9. **Verification honesty.** Prefer a live, human-conducted examination; mark any typed, in-session run as degraded and never present it as equivalent. Disclose that the tool cannot detect an author who routes questions through another model — the record's value is that it is human-readable and adjudicated, not that it is tamper-proof.
 
 ---
 
-*Skill v2.3 | June 2026 | Denolle Group, University of Washington*
+*Skill v2.4 | July 2026 | Denolle Group, University of Washington*
+*v2.4 change (author verification): added an optional, interactive Author Verification pass (`S-AV`, `references/section_author_verification.md`) — an oral-exam-style quiz that interrogates the authors on the choices they must own (data-processing and signal-processing first, then methods, claims, interpretation, limitations, novelty, figures), grounded in the review inventory so questions target the exact places the paper states what but not why (Step 6). It is a separate axis from the rubric — accountability, not quality; it feeds no criterion and gates nothing. It certifies process, not competence: the agent asks and records verbatim answers to a verification log (`reviews/<id>.verification.json`), classifies each answer's engagement (not correctness), and a named human adjudicates; a process-only in-paper Author Verification Statement (wording in `references/review_manifest.md`) records that the examination happened without claiming understanding. Live/oral is the high-integrity mode; typed in-session runs are marked degraded. Governance rules 8–9; a countermeasure to over-reliance that keeps the human in control as the review side strengthens.*
 *v2.3 change (iterative review & provenance): made the reviewer stateful across drafts — a review manifest (`references/review_manifest.md`, `reviews/<id>.review.json`) holding provenance (skill version, model, iteration, manuscript hash) and a persistent Issue Ledger (Step 0.5); a change-detection step that ingests a latexdiff or a before/after `.tex`/`.md` pair via `scripts/detect_changes.py` and re-dispatches only changed scope (Step 1.5); a reconciliation mode where every iteration is a strict improvement — prior findings get RESOLVED/PARTIALLY/NOT/REGRESSED verdicts, new findings are quarantined to changed text (`INTRODUCED-IN-REVISION`, `INTRODUCED-BY-RECALIBRATION`), with a monotonicity rule (rewritten Iterative-revision special case); an in-paper AI-review disclosure stamp and a copy-pasteable Ledger-for-next-iteration (Step 5); governance rules 6–7. Filesystem/CLI tool — not for stateless browser sessions past iteration 1.*
 *v2.2 change (diversity, Phase 1): added a per-author voice profile (Step 0, `references/author_profile.md`, `profiles/`); a Citation & Idea Diversity subagent (`S-CD`); a novelty/interdisciplinarity guardrail (C1); an anti-homogenization voice-guard and persona-cannot-override-integrity rule (Tone). Diversity is surfaced and guarded, never scored as a criterion.*
 *v2.1 change: reproducibility promoted from a Methods-derived criterion to a first-class subagent (S-RP) with a constructive whole-workflow reproduction dry-run; dispatch generalized to a uniform subagent-registry contract.*

@@ -10,6 +10,14 @@ submission-readiness report. On a re-review it runs incrementally: it reconciles
 each prior finding and raises new issues only on text the revision changed (see
 *Iterative review, provenance & versioning* below).
 
+It also has an optional **Author Verification** pass — an interactive,
+oral-exam-style quiz that interrogates the authors on the data-processing,
+signal-processing, and interpretation choices they must own, records their
+answers to a verification log, and emits a process-only in-paper statement. It is
+a countermeasure to over-reliance: as the review side gets better at critiquing
+the paper, this side keeps the human in control of it (see *Author Verification*
+below).
+
 The review is **advisory**. A human approves every finding before submission, and
 it is intended for your own unpublished work — never another group's manuscript,
 which would breach journal confidentiality.
@@ -25,7 +33,7 @@ denolle-pre-submission-reviewer/
 ├── skills/
 │   └── pre-submission-reviewer/      ← THE SOURCE OF TRUTH — edit only here
 │       ├── SKILL.md                  ← the orchestrator
-│       ├── references/               ← the nine subagents + manifest schema
+│       ├── references/               ← nine subagents + S-AV author quiz + manifest schema
 │       │   ├── section_abstract.md           (S-AB)
 │       │   ├── section_introduction.md       (S-IN)
 │       │   ├── section_methods.md            (S-ME)
@@ -35,8 +43,9 @@ denolle-pre-submission-reviewer/
 │       │   ├── section_figures_data.md       (S-FD)
 │       │   ├── section_reproducibility.md    (S-RP)
 │       │   ├── section_citation_diversity.md (S-CD)
+│       │   ├── section_author_verification.md (S-AV — interactive author quiz)
 │       │   ├── author_profile.md             (persona layer)
-│       │   └── review_manifest.md            ← provenance + iteration ledger schema
+│       │   └── review_manifest.md            ← provenance + iteration ledger + verification-log schema
 │       └── profiles/                 ← per-author voice profiles (default.md, TEMPLATE.md)
 ├── scripts/
 │   └── detect_changes.py             ← diff wrapper: latexdiff / before-after pair → changes.json
@@ -188,13 +197,53 @@ copy-pasteable **Ledger for next iteration**.
 > iteration 2+ use a CLI tool (or, as a degraded fallback, manually paste the
 > *Ledger for next iteration* block back in each time).
 
+## Author Verification (keeping the human in control)
+
+The better a review tool gets, the greater the temptation to let it own the
+paper. The **Author Verification** pass exists to resist that. It does not review
+the manuscript — it **examines the authors**, oral-exam style, on the choices a
+scientist must own: the **data-processing and signal-processing workflow first**
+(filters, windows, thresholds, normalization, stacking, detection, inversion,
+ML-split independence), then method, claims, interpretation, limitations,
+novelty, and figures.
+
+Ask for it directly — "quiz me on my paper," "verify I understand my methods,"
+"check I'm in control of the workflow" — or run it after a review, where it
+targets the exact places the review found the paper stating *what* but not *why*
+(every `REPRODUCTION-STOP`, every unjustified method choice). It asks one question
+at a time, questions that **can't be answered by re-reading the paper**, records
+your answers verbatim, and writes a transcript to
+`reviews/<manuscript-id>.verification.json`.
+
+What it is, and is not:
+
+- **It certifies process, not competence.** It cannot measure understanding — a
+  determined author could route the questions through another model — so it never
+  claims to. The value is the transcript: your own account of your choices, on the
+  record, for a co-author or the PI to read and judge.
+- **The agent does not grade.** It asks, probes once if an answer is vague, and
+  records whether each question was *answered* — never whether you are *right*. A
+  named human adjudicates.
+- **Live over typed.** A human-conducted oral exam is the high-integrity mode;
+  typed answers entered in the same session are marked *degraded*.
+- **It gates nothing.** A completed pass does not clear a paper and never overrides
+  a soundness / reproducibility / evidence finding from the review.
+- **It emits a process-only in-paper statement** you may include (or not) in the
+  AI-use / Acknowledgments section — worded to record that the examination
+  happened, never that understanding was proven.
+
+This is a starting point, not a tamper-proof credential. Its credibility rests on
+the human who reads the transcript — most naturally the advisor, as a
+student↔advisor conversation about the methods — not on a badge.
+
 ## How the group uses it
 
 Whatever the tool, the trigger is the same: ask for a pre-submission review of a
 specific draft, name the target journal and paper type, and attach the
 manuscript. You get back a section-by-section to-do list, the eight criteria
 scored, strengths first, and one recommendation: ready / revise before
-submission / major revision / not ready.
+submission / major revision / not ready. Optionally follow it with an Author
+Verification pass (above).
 
 Bring back a `REPRODUCTION-STOP` you disagree with — that is how we tune the
 subagents.

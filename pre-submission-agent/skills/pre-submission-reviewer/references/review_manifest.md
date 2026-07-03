@@ -171,6 +171,97 @@ attests only that the draft passed through the tool.
 
 ---
 
+## Author Verification log (`reviews/<id>.verification.json`)
+
+The optional **Author Verification** pass (`S-AV`, SKILL Step 6) writes its own
+record — a **sibling** of the review manifest, in the same provenance family but a
+separate file, because it is a different axis (accountability, not quality) and
+must never be mistaken for a quality score. One per manuscript:
+
+```
+reviews/<manuscript-id>.verification.json
+```
+
+It is a **transcript**, not a ledger: it records what was asked and answered, not
+a set of findings to reconcile. It certifies **process, not competence** — see
+governance rules 8–9. Schema:
+
+```json
+{
+  "manuscript_id": "denolle2026-tremor",
+  "skill_version": "2.4",
+  "model": "claude-opus-4-8",
+  "manuscript_hash": "sha256:1f3a…",
+  "mode": "LIVE",
+  "answering_authors": ["A. Student"],
+  "adjudicator": "M. Denolle",
+  "grounded_in": "review iteration 2 inventory",
+  "date": "2026-07-02",
+  "coverage": {
+    "workflow": true, "method": true, "claims": true, "interpretation": true,
+    "limitations": true, "novelty": true, "figures": true
+  },
+  "topics": [
+    {
+      "id": "AV.1",
+      "topic": "bandpass filter — phase choice",
+      "location": "Methods ¶3",
+      "covers": ["S-RP.R2", "S-ME.3"],
+      "question": "You use a 2–8 Hz zero-phase bandpass. Why zero-phase and not causal here, and what happens to your arrival-time picks if you'd used causal?",
+      "answer_verbatim": "…",
+      "probe": null,
+      "engagement": "ANSWERED-IN-OWN-WORDS"
+    }
+  ],
+  "deferred_or_uncovered": [
+    {"topic": "velocity-model choice", "route_to": "co-author B. Postdoc"}
+  ]
+}
+```
+
+### Field notes
+
+- **`mode`** — `LIVE` (human-conducted oral exam, high integrity) or
+  `TYPED` (degraded — answers entered in-session where a model could generate
+  them). Never present `TYPED` as equivalent to `LIVE`.
+- **`answering_authors` / `adjudicator`** — named humans. The adjudicator judges
+  adequacy by reading the transcript; the agent never does. `adjudicator` may be
+  `"self-attested"` when no separate human reviews it (weaker).
+- **`grounded_in`** — the review iteration whose inventory seeded the questions, or
+  `"standalone"` (thinner coverage; no prior review).
+- **`engagement`** — one of `ANSWERED-IN-OWN-WORDS` / `PARTIAL` /
+  `DEFERRED→<name>` / `DECLINED` / `DID-NOT-ADDRESS-Q`. This records **whether the
+  question was answered, not whether the answer is correct**. There is no
+  correctness or competence field, by design.
+
+Unlike the review manifest, there is no reconciliation — an examination is a
+point-in-time record. A new examination replaces the last; keep prior ones as
+`reviews/<id>.verification.<date>.json` if a history is wanted.
+
+---
+
+## Author Verification Statement (in-paper)
+
+Step 6 emits this for the manuscript's AI-use / Acknowledgments statement. Like
+the AI-review disclosure stamp, it records **process, not competence** — that an
+examination happened, never that the authors understand the work. Fill the
+bracketed fields from the verification log:
+
+> The authors completed a structured author-verification examination of this
+> manuscript's data-processing, signal-processing, and interpretation choices
+> (Denolle Pre-Submission Reviewer, Author Verification pass v[skill_version],
+> [N] topics, [date], [live / typed]). The examination records the authors' own
+> account of these choices for internal accountability; it does not certify their
+> correctness and is not an endorsement of the manuscript.
+
+Do not reword this into a competence or quality claim ("verified understanding,"
+"authors demonstrated mastery," "human-validated"). It attests only that the
+examination took place and that a record of the answers is retained. Whether to
+include it in the paper at all is the authors' choice — the internal log stands on
+its own.
+
+---
+
 ## Ledger for next iteration (copy-paste fallback)
 
 Step 5 also prints the full ledger as a fenced block. In a CLI run this is
