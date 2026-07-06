@@ -128,10 +128,15 @@ manifest for this manuscript — by default `reviews/<manuscript-id>.review.json
   *Iterative revision* under Special Cases). Increment the iteration; append the
   prior result to `history`.
 
-**The manifest is the provenance record.** It carries skill version, model,
-profile, journal, iteration count, manuscript hash, and per-finding history — it
-is what lets us trace what was reviewed, by which version, and what changed
-between drafts. Never hand-edit the manifest to suppress a finding: an author
+**The manifest is the provenance record.** It carries skill version, skill commit
+(the short git SHA the skill was loaded from), model, profile, journal, iteration
+count, manuscript hash, and per-finding history — it is what lets us trace what
+was reviewed, by which version, and what changed between drafts. Capture
+`skill_commit` at the start of each run: read the `INSTALLED_FROM` file beside
+this skill if present, else `git rev-parse --short HEAD` in the skill's source
+checkout; record `"unknown"` if neither is available (e.g. a stateless browser
+upload). Version says *what* release; commit pins *exactly which bytes*, and the
+two resolve to the release tag `presub-reviewer/v<version>`. Never hand-edit the manifest to suppress a finding: an author
 marking an integrity finding (C2/C3/C4) "resolved" does not make it resolved — the
 reconciliation pass re-checks it against the changed text.
 
@@ -379,7 +384,7 @@ Manuscript: [title]   Target: [journal + article type]   Date: [date]
 Reviewer: Pre-Submission Orchestrator (9 subagents → 8-criterion synthesis)
 Note: Advisory. All findings require human judgment before submission.
 Profile: [author profile used, or "default"]
-Provenance: Skill v[version] | Model [model id] | Iteration [N] | Manuscript hash [short]
+Provenance: Skill v[version] (commit [skill_commit]) | Model [model id] | Iteration [N] | Manuscript hash [short]
 Mode: [Full first review | Reconciliation — delta vs. iteration N-1]
 
 SUMMARY  — [3–5 sentences; what the paper does, its contribution, overall
