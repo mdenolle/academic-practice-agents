@@ -105,6 +105,7 @@ SUBAGENTS=(
   "presub-figures-data|S-FD|section_figures_data.md|Figures, tables, captions, equations (cross-cutting)"
   "presub-reproducibility|S-RP|section_reproducibility.md|Whole computational workflow — reproducibility & open science"
   "presub-citation-diversity|S-CD|section_citation_diversity.md|Whole reference list — citation & idea diversity"
+  "presub-prose-register|S-PR|section_prose_register.md|Whole manuscript — scientific register / colloquialism scan"
 )
 
 for entry in "${SUBAGENTS[@]}"; do
