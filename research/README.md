@@ -43,5 +43,14 @@ three-plane split — **content** (the agents), **harness** (FrugalMind), **gold
 
 ## Specs in this folder
 
+- [`publication-pipeline/`](publication-pipeline/) — **prompt → code → paper → journal**,
+  version-controlled end to end. Not an agent persona but the infrastructure a
+  Scientist's paper-writing work runs on: a Quarto Markdown source, one Python build
+  script that renders it to a journal's LaTeX class, and a GitHub Action that syncs the
+  built manuscript to a paper-only repo Overleaf reads from — so co-authors keep working
+  in Overleaf with zero new tooling, and their comments come back to the code repo as
+  GitHub issues instead of evaporating in a chat thread. Validated on a real submission
+  draft (`Denolle-Lab/codameter`); includes a copyable template.
+
 The research role's agents are maintained in the repositories above. To propose a
 *new role* in this collection, [open an issue](../.github/ISSUE_TEMPLATE/new-role.yml).

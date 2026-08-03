@@ -1,0 +1,114 @@
+name: sync-paper-to-overleaf
+
+# Adapted from the validated pipeline in Denolle-Lab/codameter (see the parent
+# README.md for the full write-up). Copy this into your code repo's
+# .github/workflows/, then edit the four CONFIG blocks marked below.
+#
+# Mirrors the already-built manuscript (the rendered .tex, its bibliography,
+# any journal class/style files it depends on, and the figures it references)
+# into a separate, paper-only GitHub repo -- the one Overleaf's GitHub Sync
+# reads from. Overleaf itself then picks up the change (automatically, if
+# GitHub Sync is enabled on the project, or via "Menu -> GitHub -> Pull"
+# otherwise).
+#
+# Your code repo's paper/ directory is the single source of truth for every
+# file this workflow copies -- including the journal's class/style files, if
+# you carry any local patches to them (see the parent README's gotchas
+# appendix). An unpatched copy sitting only in the paper repo will make
+# Overleaf hit exactly the errors those patches exist to fix.
+#
+# Deliberately does NOT re-run the quarto/lualatex build in CI: the manuscript
+# is built and verified locally (`python paper/build.py`), where the full
+# TeX Live toolchain your manuscript needs is already known to work. This
+# workflow only syncs the already-committed, already-verified output. Trying
+# to reproduce a from-scratch LaTeX toolchain in a fresh CI image adds a
+# second place version drift can happen, for no benefit once the build is
+# already verified locally.
+#
+# One-time setup this workflow depends on (not done by this workflow):
+#   1. Generate a deploy key OUTSIDE any git working tree, e.g. in ~/.ssh/ --
+#      NOT a bare relative filename run from inside a repo checkout, which
+#      leaves the private key sitting untracked (and easy to `git add -A`
+#      into a commit) right in the working directory:
+#        ssh-keygen -t ed25519 -C "paper-sync" -f ~/.ssh/paper-deploy -N ""
+#   2. Add ~/.ssh/paper-deploy.pub to your paper repo -> Settings ->
+#      Deploy keys -> Add deploy key -> check "Allow write access".
+#      (or: `gh repo deploy-key add ~/.ssh/paper-deploy.pub
+#      --repo <owner>/<paper-repo> --title "paper-sync" --allow-write`)
+#   3. Add the contents of ~/.ssh/paper-deploy (the private half) as a
+#      repository secret named PAPER_DEPLOY_KEY on your code repo
+#      (Settings -> Secrets and variables -> Actions -> New repository secret;
+#      or `gh secret set PAPER_DEPLOY_KEY --repo <owner>/<code-repo>
+#      < ~/.ssh/paper-deploy`).
+#   4. Keep the key pair in ~/.ssh/ as your local record of what the secret
+#      contains; there is nothing to delete since it was never inside a repo.
+
+on:
+  push:
+    branches: [main] # CONFIG 1 of 4 -- your default branch name (main/master)
+    paths:
+      # CONFIG 2 of 4 -- every file paper/build.py produces or reads that
+      # Overleaf needs. Missing an entry here means a change to that file
+      # never triggers a sync.
+      - "paper/manuscript.tex"
+      - "paper/references.bib"
+      - "paper/*.cls" # your journal's class file, if any
+      - "paper/*.bst" # your journal's bibliography style, if any
+      - "paper/*.sty" # any journal-provided style files, if any
+      - "figures/**" # wherever your figures live
+      - ".github/workflows/sync-to-overleaf.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: sync-paper-to-overleaf
+  cancel-in-progress: true
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code repo (paper source)
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            paper
+            figures
+          sparse-checkout-cone-mode: false
+
+      - name: Checkout paper repo
+        uses: actions/checkout@v4
+        with:
+          repository: OWNER/PAPER-REPO # CONFIG 3 of 4 -- your paper repo
+          ssh-key: ${{ secrets.PAPER_DEPLOY_KEY }}
+          path: paper-repo
+
+      - name: Sync manuscript, bibliography, class files, and figures
+        run: |
+          mkdir -p paper-repo/figures
+          cp paper/manuscript.tex paper-repo/
+          cp paper/references.bib paper-repo/
+          cp paper/*.cls paper-repo/ 2>/dev/null || true
+          cp paper/*.bst paper-repo/ 2>/dev/null || true
+          cp paper/*.sty paper-repo/ 2>/dev/null || true
+          rsync -a --delete figures/ paper-repo/figures/
+
+      - name: Commit and push if changed
+        working-directory: paper-repo
+        run: |
+          git config user.name "paper-sync[bot]"
+          git config user.email "actions@github.com"
+          # CONFIG 4 of 4 -- list exact filenames, matching the copy step
+          # above, rather than `git add -A`: this is a shared repo your
+          # co-authors' Overleaf project reads, so only stage what this
+          # workflow is actually meant to manage.
+          git add manuscript.tex references.bib figures/
+          git add *.cls *.bst *.sty 2>/dev/null || true
+          if git diff --cached --quiet; then
+            echo "No changes to sync."
+            exit 0
+          fi
+          git commit -m "Sync from $(basename "$GITHUB_REPOSITORY")@${GITHUB_SHA::7}"
+          git push
