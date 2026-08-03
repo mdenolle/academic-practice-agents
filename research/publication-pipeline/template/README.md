@@ -5,7 +5,7 @@ Two files, adapted from a working pipeline (see the parent [README.md](../README
 ## Files
 
 - **`build.py`** → copy to `paper/build.py`. Edit the three `CONFIG` blocks at the top: your manuscript's filename(s), any figure-regeneration commands, and (only if your journal's class needs it) the literal `.tex` string patches described in the parent README's gotchas appendix.
-- **`.github/workflows/sync-to-overleaf.yml`** → copy to `.github/workflows/sync-to-overleaf.yml` in your code repo. Edit the four `CONFIG` blocks: branch name, trigger paths, paper repo name, and the exact filenames staged in the commit step.
+- **`.github/workflows/sync-to-overleaf.yml`** → copy to `.github/workflows/sync-to-overleaf.yml` in your code repo. Edit the four `CONFIG` blocks: branch name, trigger paths, paper repo name, and the exact filenames staged in the commit step. The "Sync manuscript, bibliography, class files, and figures" step's `cp`/`rsync` commands are **not** themselves a marked `CONFIG` block but do hardcode your manuscript/bibliography filenames (`manuscript.tex`, `references.bib`) — if yours differ, update those commands too, to match `CONFIG 4`'s staged filenames.
 
 ## Order of operations
 

@@ -110,6 +110,13 @@ def patch_and_recompile(tex: Path) -> None:
         if old in text:
             text = text.replace(old, new)
             changed = True
+        else:
+            # Silently doing nothing here would mask a typo'd target string
+            # or an upstream Quarto/pandoc template change -- either way you'd
+            # get an unexpectedly unpatched PDF with no signal that anything
+            # was wrong.
+            preview = old if len(old) <= 60 else old[:60] + "..."
+            print(f"warning: TEX_PATCHES target not found in {tex.name}, skipped: {preview!r}")
     if not changed:
         return
     tex.write_text(text, encoding="utf-8")

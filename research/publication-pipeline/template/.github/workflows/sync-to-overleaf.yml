@@ -54,6 +54,7 @@ on:
       - "paper/references.bib"
       - "paper/*.cls" # your journal's class file, if any
       - "paper/*.bst" # your journal's bibliography style, if any
+      - "paper/*.sty" # any journal-provided style files, if any
       - "figures/**" # wherever your figures live
       - ".github/workflows/sync-to-overleaf.yml"
   workflow_dispatch:
@@ -91,6 +92,7 @@ jobs:
           cp paper/references.bib paper-repo/
           cp paper/*.cls paper-repo/ 2>/dev/null || true
           cp paper/*.bst paper-repo/ 2>/dev/null || true
+          cp paper/*.sty paper-repo/ 2>/dev/null || true
           rsync -a --delete figures/ paper-repo/figures/
 
       - name: Commit and push if changed
@@ -103,7 +105,7 @@ jobs:
           # co-authors' Overleaf project reads, so only stage what this
           # workflow is actually meant to manage.
           git add manuscript.tex references.bib figures/
-          git add *.cls *.bst 2>/dev/null || true
+          git add *.cls *.bst *.sty 2>/dev/null || true
           if git diff --cached --quiet; then
             echo "No changes to sync."
             exit 0

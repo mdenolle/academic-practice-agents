@@ -10,7 +10,7 @@ A typical academic paper's provenance looks like this: exploratory code in a not
 
 This guide describes a pipeline where **the code, the figures, and the paper text are versioned together in one git history**, the LaTeX a journal wants is *generated*, not hand-typeset, and the one genuinely manual step — turning a colleague's Overleaf comment into a code change — is captured as a GitHub issue instead of a Slack message that evaporates.
 
-It is not a framework to install. It is five small, standard tools wired together in a specific order. Every piece is something you already have a account/license for as an academic: Python, git, GitHub, Quarto, Overleaf.
+It is not a framework to install. It is five small, standard tools wired together in a specific order. Every piece is something you already have an account/license for as an academic: Python, git, GitHub, Quarto, Overleaf.
 
 ## The five stages
 
@@ -38,7 +38,7 @@ This pipeline is not hypothetical — it is running today on:
 - **Paper repo**: [`Denolle-Lab/codameter-paper`](https://github.com/Denolle-Lab/codameter-paper) — synced automatically from the code repo, linked to an Overleaf project via Overleaf's GitHub Sync.
 - **Sync automation**: `.github/workflows/sync-paper-to-overleaf.yml` in the code repo.
 
-Every claim below is grounded in that project, not a hypothetical. The [`template/`](template/) folder in this guide is a genericized copy of the same two files, ready to adapt.
+Every claim below is grounded in that project, not a hypothetical. The [`template/`](template/) folder in this guide is a genericized copy of the same two files, ready to adapt — note it names the workflow file `sync-to-overleaf.yml` (a more generic name than the worked example's own `sync-paper-to-overleaf.yml`); the two are the same file with different names, not different files.
 
 ---
 
@@ -91,7 +91,10 @@ None of this is specific to GJI — it is the generic shape of "an old but real 
 A **GitHub Action**, triggered on push to the code repo's `paper/**` (and the figures/class-files it depends on — see the [gotchas appendix](#appendix-hard-won-latex--pandoc-gotchas) for why the path list matters), copies the built `.tex`, bibliography, figures, and the journal's class/style files into a **separate, paper-only GitHub repo**. That repo is the thing Overleaf's **GitHub Sync** feature reads from — either automatically, or via a "Pull from GitHub" click in Overleaf's menu.
 
 ```yaml
-# .github/workflows/sync-paper-to-overleaf.yml — the shape of it (full version in template/)
+# .github/workflows/sync-paper-to-overleaf.yml — the shape of it, as it actually
+# runs in the worked example (Denolle-Lab/codameter); paths trimmed for
+# readability. For the generic, ready-to-adapt version with different
+# (more generic) filenames and paths, see template/.github/workflows/sync-to-overleaf.yml.
 on:
   push:
     branches: [main]
